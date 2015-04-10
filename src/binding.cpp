@@ -51,6 +51,7 @@ public:
 NAN_METHOD(loadDb)
 {
 //    NanScope();
+
     if ((args.Length() < 1) || !args[0]->IsString())
         MY_THROW_EXCEP("No filename specified");
     String::Utf8Value fname(args[0]->ToString());
@@ -221,4 +222,10 @@ void init(Handle<Object> exports)
   exports->Set(NanNew<String>("unload"), NanNew<FunctionTemplate>(unload)->GetFunction());
 }
 
-NODE_MODULE(geoip2c, init)
+void Initialize (Handle<Object> exports);
+
+void init(Handle<Object> exports) {
+  NODE_SET_METHOD(exports, "hello", Method);
+}
+
+NODE_MODULE(geoip2c, Initialize)
