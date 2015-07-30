@@ -13,12 +13,14 @@ MMDB_s mmdbCountry;
 MMDB_s mmdbCity;
 MMDB_s mmdbIsp;
 MMDB_s mmdbNetspeed;
+MDB_s mmdbAp;
 static bool loaded = false;
 
 #define TYPE_COUNTRY 1;
 #define TYPE_CITY 2;
 #define TYPE_ISP 3;
 #define TYPE_NETSPEED 4;
+#define TYPE_AP 5;
 //std::string dbType = std::string("");
 
 int dbType = 0;
@@ -71,6 +73,9 @@ NAN_METHOD(loadDb)
         MY_THROW_EXCEP("No netspeed filename specified");
     String::Utf8Value netspeedname(args[3]->ToString());
 
+    if ((args.Length() < 5) || !args[4]->IsString())
+        MY_THROW_EXCEP("No AP filename specified");
+    String::Utf8Value apname(args[4]->ToString());
 
     // load the country db
     int status = MMDB_open(*countryname, MMDB_MODE_MMAP, &mmdbCountry);
@@ -80,8 +85,10 @@ NAN_METHOD(loadDb)
     int status3 = MMDB_open(*ispname, MMDB_MODE_MMAP, &mmdbIsp);
      // load the netspeed db
     int status4 = MMDB_open(*netspeedname, MMDB_MODE_MMAP, &mmdbNetspeed);
+     // load the AP db
+    int status5 = MMDB_open(*apname, MMDB_MODE_MMAP, &mmdbAp);
 
-    if (status != MMDB_SUCCESS && status2 != MMDB_SUCCESS && status3 != MMDB_SUCCESS  && status4 != MMDB_SUCCESS )
+    if (status != MMDB_SUCCESS && status2 != MMDB_SUCCESS && status3 != MMDB_SUCCESS  && status4 != MMDB_SUCCESS && status5 != MMDB_SUCCESS )
     {
         if (status == MMDB_IO_ERROR && status2 == MMDB_IO_ERROR && status3 == MMDB_IO_ERROR && status4 == MMDB_IO_ERROR)
             MY_THROW_EXCEP((std::string("I/O error opeining file '")+*countryname+"': "+
@@ -123,6 +130,7 @@ NAN_METHOD(lookupIp)
 
     MMDB_lookup_result_s netspeedResult = MMDB_lookup_string(&mmdbNetspeed, *ip, &gai_error, &mmdb_error);
 
+    MMDB_lookup_result_s apResult = MMDB_lookup_string(&mmdbAp, *ip, &gai_error, &mmdb_error);
 
 Local<Object> IpData = NanNew<Object>();
 
@@ -137,6 +145,8 @@ if (status != MMDB_SUCCESS || !ccode.has_data){
     IpData->Set(NanNew("provider"), NanNew("NA"));
     IpData->Set(NanNew("netspeed"), NanNew("NA"));
     IpData->Set(NanNew("countryName"), NanNew("NA"));
+    IpData->Set(NanNew("is_anonymous"),  NanNew<Boolean>(false));
+    IpData->Set(NanNew("is_public_proxy"),  NanNew<Boolean>(false));
     NanReturnValue(IpData);
 }else{
     if (ccode.type != MMDB_DATA_TYPE_UTF8_STRING)
@@ -213,6 +223,41 @@ if (status != MMDB_SUCCESS || !netspeed.has_data){
 IpData->Set(NanNew("netspeed"), NanNew("NA"));
 IpData->Set(NanNew("netspeedError"), NanNew("Not Found"));
 }
+
+
+if (apResult.found_entry){
+MMDB_entry_data_s ap;
+MMDB_entry_data_s pp;
+int is_anonymous = MMDB_get_value(&apResult.entry, &ap, "is_anonymous",NULL);
+int is_public_proxy = MMDB_get_value(&apResult.entry, &pp, "is_public_proxy",NULL);
+
+if (is_anonymous != MMDB_SUCCESS || !ap.has_data){
+  IpData->Set(NanNew<String>("is_anonymous"), NanNew<Boolean>(false));
+  IpData->Set(NanNew("apError"), NanNew("NO is_anonymous Data"));
+  }else{
+    if (ap.is_anonymous != MMDB_DATA_TYPE_BOOLEAN)
+       MY_THROW_EXCEP("Unexpected data type of result for is_anonymous");
+
+    IpData->Set(NanNew<String>("is_anonymous"), NanNew<Boolean>(ap.boolean));
+}
+
+if (is_public_proxy != MMDB_SUCCESS || !pp.has_data){
+  IpData->Set(NanNew<String>("is_public_proxy"), NanNew<Boolean>(false));
+  IpData->Set(NanNew("apError"), NanNew("NO is_public_proxy Data"));
+  }else{
+    if (pp.is_public_proxy != MMDB_DATA_TYPE_BOOLEAN)
+       MY_THROW_EXCEP("Unexpected data type of result for is_public_proxy");
+
+    IpData->Set(NanNew<String>("is_public_proxy"), NanNew<Boolean>(pp.boolean));
+}
+
+
+}else{
+IpData->Set(NanNew("is_anonymous"), NanNew<Boolean>(false));
+IpData->Set(NanNew("is_public_proxy"), NanNew<Boolean>(false));
+}
+
+
 NanReturnValue(IpData);
 
 }
