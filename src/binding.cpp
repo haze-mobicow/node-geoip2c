@@ -13,7 +13,7 @@ MMDB_s mmdbCountry;
 MMDB_s mmdbCity;
 MMDB_s mmdbIsp;
 MMDB_s mmdbNetspeed;
-MDB_s mmdbAp;
+MMDB_s mmdbAp;
 static bool loaded = false;
 
 #define TYPE_COUNTRY 1;
