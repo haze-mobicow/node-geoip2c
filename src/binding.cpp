@@ -86,7 +86,7 @@ NAN_METHOD(loadDb)
      // load the netspeed db
     int status4 = MMDB_open(*netspeedname, MMDB_MODE_MMAP, &mmdbNetspeed);
      // load the AP db
-    int status5 = MMDB_open(*apname, MMDB_MODE_MMAP, &mmdbAp);
+    int status5 = MMDB_open(*apname, MMDB_MODE_MASK, &mmdbAp);
 
     if (status != MMDB_SUCCESS && status2 != MMDB_SUCCESS && status3 != MMDB_SUCCESS  && status4 != MMDB_SUCCESS && status5 != MMDB_SUCCESS )
     {
