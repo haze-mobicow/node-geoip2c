@@ -226,9 +226,39 @@ IpData->Set(NanNew("netspeedError"), NanNew("Not Found"));
 
 
 if (apResult.found_entry){
+/*
+
+MMDB_entry_data_list_s *entry_data_list, *first;
+int status = MMDB_get_entry_data_list(&apResult.entry, &entry_data_list);
+if (MMDB_SUCCESS != status) {
+
+ }else{
+// save this so we can free this data later
+    first = entry_data_list;
+
+    while (1) {
+        MMDB_entry_data_list_s *next = entry_data_list = entry_data_list->next;
+        if (NULL == next) {
+            break;
+        }
+
+        switch (next->entry_data.type) {
+            case MMDB_DATA_TYPE_MAP: { ... }
+            case MMDB_DATA_TYPE_UTF8_STRING: { ... }
+            ...
+        }
+
+    }
+
+    MMDB_free_entry_data_list(first);
+
+
+}
+*/
+
 MMDB_entry_data_s ap;
-MMDB_entry_data_s pp;
 int is_anonymous = MMDB_get_value(&apResult.entry, &ap, "is_anonymous",NULL);
+MMDB_entry_data_s pp;
 int is_public_proxy = MMDB_get_value(&apResult.entry, &pp, "is_public_proxy",NULL);
 
 if (is_anonymous != MMDB_SUCCESS || !ap.has_data){
@@ -250,7 +280,6 @@ if (is_public_proxy != MMDB_SUCCESS || !pp.has_data){
 
     IpData->Set(NanNew<String>("is_public_proxy"), NanNew<Boolean>(pp.boolean));
 }
-
 
 }else{
 IpData->Set(NanNew("is_anonymous"), NanNew<Boolean>(false));
