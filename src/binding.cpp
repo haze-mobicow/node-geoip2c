@@ -86,7 +86,7 @@ NAN_METHOD(loadDb)
      // load the netspeed db
     int status4 = MMDB_open(*netspeedname, MMDB_MODE_MMAP, &mmdbNetspeed);
      // load the AP db
-    int status5 = MMDB_open(*apname, MMDB_MODE_MASK, &mmdbAp);
+    int status5 = MMDB_open(*apname, MMDB_MODE_MMAP, &mmdbAp);
 
     if (status != MMDB_SUCCESS && status2 != MMDB_SUCCESS && status3 != MMDB_SUCCESS  && status4 != MMDB_SUCCESS && status5 != MMDB_SUCCESS )
     {
@@ -128,9 +128,10 @@ NAN_METHOD(lookupIp)
 
     MMDB_lookup_result_s ispResult = MMDB_lookup_string(&mmdbIsp, *ip, &gai_error, &mmdb_error);
 
+    MMDB_lookup_result_s apResult = MMDB_lookup_string(&mmdbAp, *ip, &gai_error, &mmdb_error);
+
     MMDB_lookup_result_s netspeedResult = MMDB_lookup_string(&mmdbNetspeed, *ip, &gai_error, &mmdb_error);
 
-    MMDB_lookup_result_s apResult = MMDB_lookup_string(&mmdbAp, *ip, &gai_error, &mmdb_error);
 
 Local<Object> IpData = NanNew<Object>();
 
@@ -257,7 +258,7 @@ if (MMDB_SUCCESS != status) {
 */
 
 MMDB_entry_data_s ap;
-int is_anonymous = MMDB_get_value(&apResult.entry, &ap, "is_anonymous",NULL);
+int is_anonymous = MMDB_get_value(&apResult.entry, &ap, 'is_anonymous',NULL);
 
 if (is_anonymous != MMDB_SUCCESS || !ap.has_data){
   IpData->Set(NanNew<String>("is_anonymous"), NanNew<Boolean>(false));
@@ -270,7 +271,7 @@ if (is_anonymous != MMDB_SUCCESS || !ap.has_data){
 }
 
 MMDB_entry_data_s pp;
-int is_public_proxy = MMDB_get_value(&apResult.entry, &pp, "is_public_proxy",NULL);
+int is_public_proxy = MMDB_get_value(&apResult.entry, &pp, 'is_public_proxy',NULL);
 if (is_public_proxy != MMDB_SUCCESS || !pp.has_data){
   IpData->Set(NanNew<String>("is_public_proxy"), NanNew<Boolean>(false));
   IpData->Set(NanNew("apError"), NanNew("NO is_public_proxy Data"));
