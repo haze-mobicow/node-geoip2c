@@ -90,7 +90,7 @@ NAN_METHOD(loadDb)
 
     if (status != MMDB_SUCCESS && status2 != MMDB_SUCCESS && status3 != MMDB_SUCCESS  && status4 != MMDB_SUCCESS && status5 != MMDB_SUCCESS )
     {
-        if (status == MMDB_IO_ERROR && status2 == MMDB_IO_ERROR && status3 == MMDB_IO_ERROR && status4 == MMDB_IO_ERROR)
+        if (status == MMDB_IO_ERROR && status2 == MMDB_IO_ERROR && status3 == MMDB_IO_ERROR && status4 == MMDB_IO_ERROR && status5 == MMDB_IO_ERROR)
             MY_THROW_EXCEP((std::string("I/O error opeining file '")+*countryname+"': "+
                             nonNull(strerror(errno))).c_str())
     else
