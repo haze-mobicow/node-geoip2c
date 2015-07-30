@@ -1,6 +1,6 @@
 {
   "name": "geoip2c",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bindings to the libmaxminddb C library (new binary format), supporting both IPv4 and IPv6 lookup",
   "main": "build/Release/geoip2c.node",
   "scripts": {
