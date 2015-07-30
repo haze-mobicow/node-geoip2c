@@ -270,6 +270,7 @@ NAN_METHOD(unload)
     MMDB_close(&mmdbCity);
     MMDB_close(&mmdbIsp);
     MMDB_close(&mmdbNetspeed);
+    MMDB_close(&mmdbAp);
     loaded = false;
     NanReturnUndefined();
 }
