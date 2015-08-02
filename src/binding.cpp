@@ -258,25 +258,25 @@ if (MMDB_SUCCESS != status) {
 */
 
 MMDB_entry_data_s ap;
-int is_anonymous = MMDB_get_value(&apResult.entry, &ap, 'is_anonymous',NULL);
+int is_anonymous = MMDB_get_value(&apResult.entry, &ap, "is_anonymous",NULL);
 
 if (is_anonymous != MMDB_SUCCESS || !ap.has_data){
   IpData->Set(NanNew<String>("is_anonymous"), NanNew<Boolean>(false));
   IpData->Set(NanNew("apError"), NanNew("NO is_anonymous Data"));
   }else{
-    if (ap.is_anonymous != MMDB_DATA_TYPE_BOOLEAN)
+    if (ap.type != MMDB_DATA_TYPE_BOOLEAN)
        MY_THROW_EXCEP("Unexpected data type of result for is_anonymous");
 
     IpData->Set(NanNew<String>("is_anonymous"), NanNew<Boolean>(ap.boolean));
 }
 
 MMDB_entry_data_s pp;
-int is_public_proxy = MMDB_get_value(&apResult.entry, &pp, 'is_public_proxy',NULL);
+int is_public_proxy = MMDB_get_value(&apResult.entry, &pp, "is_public_proxy",NULL);
 if (is_public_proxy != MMDB_SUCCESS || !pp.has_data){
   IpData->Set(NanNew<String>("is_public_proxy"), NanNew<Boolean>(false));
   IpData->Set(NanNew("apError"), NanNew("NO is_public_proxy Data"));
   }else{
-    if (pp.is_public_proxy != MMDB_DATA_TYPE_BOOLEAN)
+    if (pp.type != MMDB_DATA_TYPE_BOOLEAN)
        MY_THROW_EXCEP("Unexpected data type of result for is_public_proxy");
 
     IpData->Set(NanNew<String>("is_public_proxy"), NanNew<Boolean>(pp.boolean));
