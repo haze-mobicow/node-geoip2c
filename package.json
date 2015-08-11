@@ -3,10 +3,6 @@
   "version": "0.1.0",
   "description": "Bindings to the libmaxminddb C library (new binary format), supporting both IPv4 and IPv6 lookup",
   "main": "build/Release/geoip2c.node",
-  "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "install": "node-gyp rebuild"
-  },
   "keywords": [
         "geoip",
         "geoip2",
@@ -14,10 +10,14 @@
         "libmaxminddb"
   ],
   "dependencies": {
-        "nan": "^1.3.0"
+        "nan": "^1.3.0",
+	"node-gyp": "*"
   },
   "repository":"",
   "author": "William Gray",
   "license": "LGPL2",
-  "gypfile": true
+  "gypfile": true,
+  "scripts": {
+      "start": "node ./examples/test.js"
+  }
 }
