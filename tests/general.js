@@ -168,3 +168,20 @@ exports.test_anonymous_fields  = function(test) {
 }
 
 
+exports.test_netspeed_fields = function(test) {
+    var opts = {};
+    opts[geo.LOOKUP_KEY_NETSPEED] = geo.T_COUNTRY_ALL;
+
+    var rez = geo.lookupIp(TEST_IP, opts);
+    test.ok(!rez.hasOwnProperty(geo.LOOKUP_KEY_COUNTRY), "country - property");
+    test.ok(!rez.hasOwnProperty(geo.LOOKUP_KEY_CITY), "city - property");
+    test.ok(!rez.hasOwnProperty(geo.LOOKUP_KEY_ISP), "isp - property");
+    test.ok(!rez.hasOwnProperty(geo.LOOKUP_KEY_ANONYMOUS), "anonymous - property");
+    test.ok(rez.hasOwnProperty(geo.LOOKUP_KEY_NETSPEED), "netspeed - property");
+
+    var netspeed = rez[geo.LOOKUP_KEY_NETSPEED];
+    test.ok(netspeed.hasOwnProperty(geo.LABEL_NETSPEED_TYPE), "connection_type");
+
+    test.done();
+}
+
