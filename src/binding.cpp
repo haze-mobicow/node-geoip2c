@@ -628,6 +628,7 @@ void init(Handle<Object> exports, Handle<Object> module)
     exports->Set(NanNew<String>("LABEL_ANYM_IS_VPN"), NanNew<String>(LABEL_ANYM_IS_VPN));
     exports->Set(NanNew<String>("LABEL_ANYM_IS_HOSTING"), NanNew<String>(LABEL_ANYM_IS_HOSTING));
     exports->Set(NanNew<String>("LABEL_ANYM_IS_TOR"), NanNew<String>(LABEL_ANYM_IS_TOR));
+    exports->Set(NanNew<String>("LABEL_NETSPEED_TYPE"), NanNew<String>(LABEL_NETSPEED_TYPE));
 
     exports->Set(NanNew<String>("T_COUNTRY_CODE"), NanNew<Uint32>(T_COUNTRY_CODE));
     exports->Set(NanNew<String>("T_COUNTRY_CONTINENT"), NanNew<Uint32>(T_COUNTRY_CONTINENT));
