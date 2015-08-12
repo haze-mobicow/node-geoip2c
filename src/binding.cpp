@@ -25,6 +25,8 @@ const unsigned int T_CITY_NAME                = 1 << 1;
 const unsigned int T_CITY_TZ                  = 1 << 2;
 const unsigned int T_CITY_REGION              = 1 << 3;
 const unsigned int T_CITY_METRO               = 1 << 4;
+const unsigned int T_CITY_LAT                 = 1 << 5;
+const unsigned int T_CITY_LON                 = 1 << 6;
 const unsigned int T_CITY_ALL                 = -1;
 
 const char* LABEL_CITY_ZIP                    = "cityZip";
@@ -32,6 +34,8 @@ const char* LABEL_CITY_NAME                   = "cityName";
 const char* LABEL_CITY_TZ                     = "cityTimeZone";
 const char* LABEL_CITY_REGION                 = "cityRegion";
 const char* LABEL_CITY_METRO                  = "cityMetro";
+const char* LABEL_CITY_LAT                    = "cityLatitude";
+const char* LABEL_CITY_LON                    = "cityLongitude";
 
 const unsigned int T_ISP_CODE                 = 1 << 0;
 const unsigned int T_ISP_NAME                 = 1 << 1;
@@ -115,6 +119,15 @@ int dbType = 0;
     else {\
         Object->Set(NanNew<String>(key), \
                     NanNew<Boolean>(mmdb_entry->boolean)); \
+    }\
+}\
+
+#define SET_MMDB_ENTRY_DOUBLE(mmdb_entry, Object, key, defval) { \
+    if (!mmdb_entry->has_data)\
+        Object->Set(NanNew<String>(key), defval); \
+    else {\
+        Object->Set(NanNew<String>(key), \
+                    NanNew<Number>(mmdb_entry->double_value)); \
     }\
 }\
 
@@ -419,6 +432,20 @@ NAN_METHOD(lookupIp)
             SET_MMDB_ENTRY_INT16(mmdb_entry, CityData, LABEL_CITY_METRO, default_val);
         }
 
+        if (t_city & T_CITY_LAT)
+        {
+            mmdb_entry = new MMDB_entry_data_s;
+            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "location", "latitude",  NULL);
+            SET_MMDB_ENTRY_DOUBLE(mmdb_entry, CityData, LABEL_CITY_LAT, default_val);
+        }
+
+        if (t_city & T_CITY_LON)
+        {
+            mmdb_entry = new MMDB_entry_data_s;
+            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "location", "longitude",  NULL);
+            SET_MMDB_ENTRY_DOUBLE(mmdb_entry, CityData, LABEL_CITY_LON, default_val);
+        }
+
         IpData->Set(keyB, CityData);
     }
 
@@ -590,6 +617,8 @@ void init(Handle<Object> exports, Handle<Object> module)
     exports->Set(NanNew<String>("LABEL_CITY_TZ"), NanNew<String>(LABEL_CITY_TZ));
     exports->Set(NanNew<String>("LABEL_CITY_REGION"), NanNew<String>(LABEL_CITY_REGION));
     exports->Set(NanNew<String>("LABEL_CITY_METRO"), NanNew<String>(LABEL_CITY_METRO));
+    exports->Set(NanNew<String>("LABEL_CITY_LAT"), NanNew<String>(LABEL_CITY_LAT));
+    exports->Set(NanNew<String>("LABEL_CITY_LON"), NanNew<String>(LABEL_CITY_LON));
     exports->Set(NanNew<String>("LABEL_ISP_CODE"), NanNew<String>(LABEL_ISP_CODE));
     exports->Set(NanNew<String>("LABEL_ISP_NAME"), NanNew<String>(LABEL_ISP_NAME));
     exports->Set(NanNew<String>("LABEL_ISP_NORGANIZATION"), NanNew<String>(LABEL_ISP_NORGANIZATION));
