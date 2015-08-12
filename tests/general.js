@@ -119,6 +119,9 @@ exports.test_city_fields = function(test) {
     test.ok(city.hasOwnProperty(geo.LABEL_CITY_ZIP), "city code");
     test.ok(city.hasOwnProperty(geo.LABEL_CITY_TZ), "citty timezone");
     test.ok(city.hasOwnProperty(geo.LABEL_CITY_REGION), "city region");
+    test.ok(city.hasOwnProperty(geo.LABEL_CITY_METRO), "city metro");
+    test.ok(city.hasOwnProperty(geo.LABEL_CITY_LAT), "city latitude");
+    test.ok(city.hasOwnProperty(geo.LABEL_CITY_LON), "city longitude");
 
     test.done();
 }
