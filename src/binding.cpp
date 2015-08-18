@@ -160,7 +160,7 @@ public:
  * */
 char* loadMMDB(char* fname, MMDB_s* db_s)
 {
-    char* result = new char[255];
+    char* result = new char[255]();
     int status = MMDB_open(fname, MMDB_MODE_MMAP, db_s);
     if (status != MMDB_SUCCESS)
     {
