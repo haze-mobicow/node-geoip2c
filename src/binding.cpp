@@ -154,55 +154,78 @@ public:
 };
 
 
-// Simple wrapper with exceptions throws
-void loadOrExcept(char* fname, MMDB_s* db_s)
+/* Simple wrapper loads MMDB file
+ * Returns status error string, if error. Empty string on success.
+ * Status will be used for loadDb JS result object.
+ * */
+char* loadMMDB(char* fname, MMDB_s* db_s)
 {
+    char* result = new char[255];
     int status = MMDB_open(fname, MMDB_MODE_MMAP, db_s);
     if (status != MMDB_SUCCESS)
     {
-        if (status == MMDB_IO_ERROR)
-            MY_THROW_EXCEP((std::string("I/O error opeining file '") + fname + "': " +
-                    nonNull(strerror(errno))).c_str())
-        MY_THROW_EXCEP((std::string("Can't open database file '") + fname + "': " +
-                    nonNull(MMDB_strerror(status))).c_str());
+        if (status == MMDB_IO_ERROR) {
+            strcat(result, "I/O error opeining file '");
+            strcat(result, fname);
+            strcat(result, "' :");
+            strcat(result, strerror(errno));
+            return result;
+        }
+        strcat(result, "Can't open database file '");
+        strcat(result, fname);
+        strcat(result, "' :");
+        strcat(result, strerror(errno));
+        return result;
     }
+
+    return result;
 }
 
 /**
- * Inits module scope DB variables
+ * Inits module scope DB variables.
+ * Returns JavaScript obejct with status error string for each load db key.
+ * On success status string empty.
  **/
 NAN_METHOD(loadDb)
 {
     if (args[0]->IsUndefined())
         MY_THROW_EXCEP("No database filenames set");
-    Local<Object> options = args[0]->ToObject();
+    Local<Object> options  = args[0]->ToObject();
+    Local<Object> db_stats = NanNew<Object>();
     Local<Value> val;
 
     // Use Country DB in case if City not set.
     if (val = options->Get(NanNew(LOOKUP_KEY_COUNTRY)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
-        loadOrExcept(*fname, &mmdbCity);
+        char* tmp = loadMMDB(*fname, &mmdbCity);
+        db_stats->Set(NanNew(LOOKUP_KEY_COUNTRY), NanNew<String>(tmp));
     }
 
     if (val = options->Get(NanNew(LOOKUP_KEY_CITY)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
-        loadOrExcept(*fname, &mmdbCity);
+        char* tmp = loadMMDB(*fname, &mmdbCity);
+        db_stats->Set(NanNew(LOOKUP_KEY_CITY), NanNew<String>(tmp));
     }
 
     if (val = options->Get(NanNew(LOOKUP_KEY_ISP)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
-        loadOrExcept(*fname, &mmdbIsp);
+        char* tmp = loadMMDB(*fname, &mmdbIsp);
+        db_stats->Set(NanNew(LOOKUP_KEY_ISP), NanNew<String>(tmp));
     }
 
     if (val = options->Get(NanNew(LOOKUP_KEY_NETSPEED)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
-        loadOrExcept(*fname, &mmdbNetspeed);
+        char* tmp = loadMMDB(*fname, &mmdbNetspeed);
+        db_stats->Set(NanNew(LOOKUP_KEY_NETSPEED), NanNew<String>(tmp));
     }
 
     if (val = options->Get(NanNew(LOOKUP_KEY_ANONYMOUS)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
-        loadOrExcept(*fname, &mmdbAnonymous);
+        char* tmp = loadMMDB(*fname, &mmdbAnonymous);
+        db_stats->Set(NanNew(LOOKUP_KEY_NETSPEED), NanNew<String>(tmp));
     }
+
+    NanReturnValue(db_stats);
 }
 
 NAN_METHOD(unload)
