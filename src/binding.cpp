@@ -158,23 +158,24 @@ public:
  * Returns status error string, if error. Empty string on success.
  * Status will be used for loadDb JS result object.
  * */
-char* loadMMDB(char* fname, MMDB_s* db_s)
+std::string loadMMDB(char* fname, MMDB_s* db_s)
 {
-    char* result = new char[255]();
+    std::string result("");
+
     int status = MMDB_open(fname, MMDB_MODE_MMAP, db_s);
     if (status != MMDB_SUCCESS)
     {
         if (status == MMDB_IO_ERROR) {
-            strcat(result, "I/O error opeining file '");
-            strcat(result, fname);
-            strcat(result, "' :");
-            strcat(result, strerror(errno));
+            result + "I/O error opeining file '"
+                + fname
+                + "' :"
+                + strerror(errno);
             return result;
         }
-        strcat(result, "Can't open database file '");
-        strcat(result, fname);
-        strcat(result, "' :");
-        strcat(result, strerror(errno));
+        result + "Can't open database file '"
+                + fname
+                + "' :"
+                + strerror(errno);
         return result;
     }
 
@@ -197,31 +198,31 @@ NAN_METHOD(loadDb)
     // Use Country DB in case if City not set.
     if (val = options->Get(NanNew(LOOKUP_KEY_COUNTRY)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
-        char* tmp = loadMMDB(*fname, &mmdbCity);
+        std::string tmp = loadMMDB(*fname, &mmdbCity);
         db_stats->Set(NanNew(LOOKUP_KEY_COUNTRY), NanNew<String>(tmp));
     }
 
     if (val = options->Get(NanNew(LOOKUP_KEY_CITY)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
-        char* tmp = loadMMDB(*fname, &mmdbCity);
+        std::string tmp = loadMMDB(*fname, &mmdbCity);
         db_stats->Set(NanNew(LOOKUP_KEY_CITY), NanNew<String>(tmp));
     }
 
     if (val = options->Get(NanNew(LOOKUP_KEY_ISP)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
-        char* tmp = loadMMDB(*fname, &mmdbIsp);
+        std::string tmp = loadMMDB(*fname, &mmdbIsp);
         db_stats->Set(NanNew(LOOKUP_KEY_ISP), NanNew<String>(tmp));
     }
 
     if (val = options->Get(NanNew(LOOKUP_KEY_NETSPEED)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
-        char* tmp = loadMMDB(*fname, &mmdbNetspeed);
+        std::string tmp = loadMMDB(*fname, &mmdbNetspeed);
         db_stats->Set(NanNew(LOOKUP_KEY_NETSPEED), NanNew<String>(tmp));
     }
 
     if (val = options->Get(NanNew(LOOKUP_KEY_ANONYMOUS)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
-        char* tmp = loadMMDB(*fname, &mmdbAnonymous);
+        std::string tmp = loadMMDB(*fname, &mmdbAnonymous);
         db_stats->Set(NanNew(LOOKUP_KEY_ANONYMOUS), NanNew<String>(tmp));
     }
 
