@@ -222,7 +222,7 @@ NAN_METHOD(loadDb)
     if (val = options->Get(NanNew(LOOKUP_KEY_ANONYMOUS)), !val->IsUndefined()) {
         String::Utf8Value fname(val->ToString());
         char* tmp = loadMMDB(*fname, &mmdbAnonymous);
-        db_stats->Set(NanNew(LOOKUP_KEY_NETSPEED), NanNew<String>(tmp));
+        db_stats->Set(NanNew(LOOKUP_KEY_ANONYMOUS), NanNew<String>(tmp));
     }
 
     NanReturnValue(db_stats);
