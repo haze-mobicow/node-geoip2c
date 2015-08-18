@@ -12,7 +12,7 @@ var TEST_IP = "8.8.8.8"
 exports.test_load_country = function(test) {
     var files = {};
     files[geo.LOOKUP_KEY_COUNTRY] =  DB_COUNTRY_PATH;
-    load_status = geo.load(files);
+    var load_status = geo.load(files);
     test.ok(load_status[geo.LOOKUP_KEY_COUNTRY] == "", "Success load must be empty");
 
     var rez = geo.lookupIp(TEST_IP);
@@ -29,7 +29,7 @@ exports.test_load_country = function(test) {
 exports.test_load_city = function(test) {
     var files = {};
     files[geo.LOOKUP_KEY_CITY] =  DB_CITY_PATH;
-    load_status = geo.load(files);
+    var load_status = geo.load(files);
     test.ok(load_status[geo.LOOKUP_KEY_CITY] == "", "Success load must be empty");
 
     var rez = geo.lookupIp(TEST_IP);
@@ -46,7 +46,7 @@ exports.test_load_city = function(test) {
 exports.test_load_isp = function(test) {
     var files = {};
     files[geo.LOOKUP_KEY_ISP] =  DB_ISP_PATH;
-    load_status = geo.load(files);
+    var load_status = geo.load(files);
     test.ok(load_status[geo.LOOKUP_KEY_ISP] == "", "Success load must be empty");
 
     var rez = geo.lookupIp(TEST_IP);
@@ -63,8 +63,8 @@ exports.test_load_isp = function(test) {
 exports.test_load_netspeed = function(test) {
     var files = {};
     files[geo.LOOKUP_KEY_NETSPEED] = DB_NETSPEED_PATH;
-    geo.load(files);
-    test.ok(load_status[geo.LOOKUP_KEY_ISP] == "", "Success load must be empty");
+    var load_status = geo.load(files);
+    test.ok(load_status[geo.LOOKUP_KEY_NETSPEED] == "", "Success load must be empty");
 
     var rez = geo.lookupIp(TEST_IP);
     test.ok(!rez.hasOwnProperty(geo.LOOKUP_KEY_COUNTRY), "country - absent");
@@ -80,8 +80,8 @@ exports.test_load_netspeed = function(test) {
 exports.test_load_anonymous = function(test) {
     var files = {};
     files[geo.LOOKUP_KEY_ANONYMOUS] = DB_ANONYMOUS_PATH;
-    geo.load(files);
-    test.ok(load_status[geo.LOOKUP_KEY_ISP] == "", "Success load must be empty");
+    var load_status = geo.load(files);
+    test.ok(load_status[geo.LOOKUP_KEY_ANONYMOUS] == "", "Success load must be empty");
 
     var rez = geo.lookupIp(TEST_IP);
     test.ok(!rez.hasOwnProperty(geo.LOOKUP_KEY_COUNTRY), "country - absent");
