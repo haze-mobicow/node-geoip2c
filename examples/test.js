@@ -8,7 +8,8 @@ files[geo.LOOKUP_KEY_NETSPEED] = "/usr/src/app/maxmind/GeoIP2-Connection-Type.mm
 files[geo.LOOKUP_KEY_ANONYMOUS] = "/usr/src/app/maxmind/GeoIP2-Anonymous-IP.mmdb";
 
 console.log("Load files -> ", files);
-geo.load(files);
+load_status = geo.load(files);
+console.log("Load status -> ", load_status);
 
 var opts = {
     "country": geo.T_COUNTRY_CODE | geo.T_COUNTRY_NAME,
