@@ -118,7 +118,7 @@ int dbType = 0;
         Object->Set(NanNew<String>(key), defval); \
     else {\
         Object->Set(NanNew<String>(key), \
-                    NanNew<Boolean>(mmdb_entry->boolean)); \
+                    NanNew<Number>(mmdb_entry->boolean)); \
     }\
 }\
 
