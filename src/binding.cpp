@@ -387,6 +387,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "country", "iso_code", NULL);
             SET_MMDB_ENTRY(mmdb_entry, CountryData, LABEL_COUNTRY_CODE, default_val);
+            delete mmdb_entry;
         }
 
         // Country name
@@ -395,6 +396,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "country", "names", "en", NULL);
             SET_MMDB_ENTRY(mmdb_entry, CountryData, LABEL_COUNTRY_NAME, default_val);
+            delete mmdb_entry;
         }
 
         if (t_ctry & T_COUNTRY_CONTINENT)
@@ -402,6 +404,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "continent", "names", "en", NULL);
             SET_MMDB_ENTRY(mmdb_entry, CountryData, LABEL_COUNTRY_CONTINENT, default_val);
+            delete mmdb_entry;
         }
 
         // Country Registred
@@ -410,6 +413,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "registered_country", "names", "en", NULL);
             SET_MMDB_ENTRY(mmdb_entry, CountryData, LABEL_COUNTRY_REGISTRED, default_val);
+            delete mmdb_entry;
         }
 
         IpData->Set(keyA, CountryData);
@@ -426,6 +430,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry,  "postal", "code", NULL);
             SET_MMDB_ENTRY(mmdb_entry, CityData, LABEL_CITY_ZIP, default_val);
+            delete mmdb_entry;
         }
 
         if (t_city & T_CITY_NAME)
@@ -433,6 +438,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "city", "names", "en", NULL);
             SET_MMDB_ENTRY(mmdb_entry, CityData, LABEL_CITY_NAME, default_val);
+            delete mmdb_entry;
         }
 
         if (t_city & T_CITY_TZ)
@@ -440,6 +446,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "location", "time_zone",  NULL);
             SET_MMDB_ENTRY(mmdb_entry, CityData, LABEL_CITY_TZ, default_val);
+            delete mmdb_entry;
         }
 
         if (t_city & T_CITY_REGION)
@@ -447,6 +454,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "subdivisions", "0", "iso_code",  NULL);
             SET_MMDB_ENTRY(mmdb_entry, CityData, LABEL_CITY_REGION, default_val);
+            delete mmdb_entry;
         }
 
         if (t_city & T_CITY_METRO)
@@ -454,6 +462,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "location", "metro_code",  NULL);
             SET_MMDB_ENTRY_INT16(mmdb_entry, CityData, LABEL_CITY_METRO, default_val);
+            delete mmdb_entry;
         }
 
         if (t_city & T_CITY_LAT)
@@ -461,6 +470,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "location", "latitude",  NULL);
             SET_MMDB_ENTRY_DOUBLE(mmdb_entry, CityData, LABEL_CITY_LAT, default_val);
+            delete mmdb_entry;
         }
 
         if (t_city & T_CITY_LON)
@@ -468,6 +478,7 @@ NAN_METHOD(lookupIp)
             mmdb_entry = new MMDB_entry_data_s;
             status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "location", "longitude",  NULL);
             SET_MMDB_ENTRY_DOUBLE(mmdb_entry, CityData, LABEL_CITY_LON, default_val);
+            delete mmdb_entry;
         }
 
         IpData->Set(keyB, CityData);
@@ -497,6 +508,7 @@ NAN_METHOD(lookupIp)
                 mmdb_entry = new MMDB_entry_data_s;
                 status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "autonomous_system_number",  NULL);
                 SET_MMDB_ENTRY_INT16(mmdb_entry, IspData, LABEL_ISP_CODE, default_val);
+                delete mmdb_entry;
             }
 
             if (t_isp & T_ISP_NAME)
@@ -504,6 +516,7 @@ NAN_METHOD(lookupIp)
                 mmdb_entry = new MMDB_entry_data_s;
                 status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "isp",  NULL);
                 SET_MMDB_ENTRY(mmdb_entry, IspData, LABEL_ISP_NAME, default_val);
+                delete mmdb_entry;
             }
 
             if (t_isp & T_ISP_NORGANIZATION)
@@ -511,6 +524,7 @@ NAN_METHOD(lookupIp)
                 mmdb_entry = new MMDB_entry_data_s;
                 status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "organization",  NULL);
                 SET_MMDB_ENTRY(mmdb_entry, IspData, LABEL_ISP_NORGANIZATION, default_val);
+                delete mmdb_entry;
             }
 
             if (t_isp & T_ISP_CORGANIZATION)
@@ -518,6 +532,7 @@ NAN_METHOD(lookupIp)
                 mmdb_entry = new MMDB_entry_data_s;
                 status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "autonomous_system_organization",  NULL);
                 SET_MMDB_ENTRY(mmdb_entry, IspData, LABEL_ISP_CORGANIZATION, default_val);
+                delete mmdb_entry;
             }
             IpData->Set(keyA, IspData);
         }
@@ -548,6 +563,7 @@ NAN_METHOD(lookupIp)
                 mmdb_entry = new MMDB_entry_data_s;
                 status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "connection_type",  NULL);
                 SET_MMDB_ENTRY(mmdb_entry, NetData, LABEL_NETSPEED_TYPE, default_val);
+                delete mmdb_entry;
             }
 
             IpData->Set(keyA, NetData);
@@ -577,6 +593,7 @@ NAN_METHOD(lookupIp)
                 mmdb_entry = new MMDB_entry_data_s;
                 status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_anonymous",  NULL);
                 SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_ANONYMOUS, default_val);
+                delete mmdb_entry;
             }
 
             if (t_anonym & T_ANYM_IS_PUBPROXY)
@@ -584,6 +601,7 @@ NAN_METHOD(lookupIp)
                 mmdb_entry = new MMDB_entry_data_s;
                 status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_public_proxy",  NULL);
                 SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_PUBPROXY, default_val);
+                delete mmdb_entry;
             }
 
             if (t_anonym & T_ANYM_IS_ANONYMOUS_VPN)
@@ -591,6 +609,7 @@ NAN_METHOD(lookupIp)
                 mmdb_entry = new MMDB_entry_data_s;
                 status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_anonymous_vpn",  NULL);
                 SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_VPN, default_val);
+                delete mmdb_entry;
             }
 
             if (t_anonym & T_ANYM_IS_HOSTING_PROVIDER)
@@ -598,6 +617,7 @@ NAN_METHOD(lookupIp)
                 mmdb_entry = new MMDB_entry_data_s;
                 status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_hosting_provider",  NULL);
                 SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_HOSTING, default_val);
+                delete mmdb_entry;
             }
 
             if (t_anonym & T_ANYM_IS_TOR_EXIT_NODE)
@@ -605,6 +625,7 @@ NAN_METHOD(lookupIp)
                 mmdb_entry = new MMDB_entry_data_s;
                 status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_tor_exit_node",  NULL);
                 SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_TOR, default_val);
+                delete mmdb_entry;
             }
 
             IpData->Set(keyA, AnymData);
