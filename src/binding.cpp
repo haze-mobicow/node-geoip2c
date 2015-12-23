@@ -118,7 +118,7 @@ int dbType = 0;
         Object->Set(NanNew<String>(key), defval); \
     else {\
         Object->Set(NanNew<String>(key), \
-                    NanNew<Boolean>(mmdb_entry->boolean)); \
+                    NanNew<Number>(mmdb_entry->boolean)); \
     }\
 }\
 
@@ -373,7 +373,7 @@ NAN_METHOD(lookupIp)
                         + nonNull(MMDB_strerror(mmdb_error))).c_str());
 
         if (!mmdb_result.found_entry)
-            NanReturnNull();
+            NanReturnValue(IpData); // Return empty Object
     }
 
     // -- Collect Country Info -----------------------------------------------
@@ -488,41 +488,40 @@ NAN_METHOD(lookupIp)
             MY_THROW_EXCEP((std::string("Error looking up ip: ")
                         + nonNull(MMDB_strerror(mmdb_error))).c_str());
 
-        if (!mmdb_result.found_entry)
-            NanReturnNull();
+        if (mmdb_result.found_entry) {
+            t_isp = valA->Uint32Value();
+            Local<Object> IspData = NanNew<Object>();   // City Container
 
-        t_isp = valA->Uint32Value();
-        Local<Object> IspData = NanNew<Object>();   // City Container
+            if (t_isp & T_ISP_CODE)
+            {
+                mmdb_entry = new MMDB_entry_data_s;
+                status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "autonomous_system_number",  NULL);
+                SET_MMDB_ENTRY_INT16(mmdb_entry, IspData, LABEL_ISP_CODE, default_val);
+            }
 
-        if (t_isp & T_ISP_CODE)
-        {
-            mmdb_entry = new MMDB_entry_data_s;
-            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "autonomous_system_number",  NULL);
-            SET_MMDB_ENTRY_INT16(mmdb_entry, IspData, LABEL_ISP_CODE, default_val);
+            if (t_isp & T_ISP_NAME)
+            {
+                mmdb_entry = new MMDB_entry_data_s;
+                status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "isp",  NULL);
+                SET_MMDB_ENTRY(mmdb_entry, IspData, LABEL_ISP_NAME, default_val);
+            }
+
+            if (t_isp & T_ISP_NORGANIZATION)
+            {
+                mmdb_entry = new MMDB_entry_data_s;
+                status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "organization",  NULL);
+                SET_MMDB_ENTRY(mmdb_entry, IspData, LABEL_ISP_NORGANIZATION, default_val);
+            }
+
+            if (t_isp & T_ISP_CORGANIZATION)
+            {
+                mmdb_entry = new MMDB_entry_data_s;
+                status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "autonomous_system_organization",  NULL);
+                SET_MMDB_ENTRY(mmdb_entry, IspData, LABEL_ISP_CORGANIZATION, default_val);
+            }
+            IpData->Set(keyA, IspData);
         }
 
-        if (t_isp & T_ISP_NAME)
-        {
-            mmdb_entry = new MMDB_entry_data_s;
-            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "isp",  NULL);
-            SET_MMDB_ENTRY(mmdb_entry, IspData, LABEL_ISP_NAME, default_val);
-        }
-
-        if (t_isp & T_ISP_NORGANIZATION)
-        {
-            mmdb_entry = new MMDB_entry_data_s;
-            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "organization",  NULL);
-            SET_MMDB_ENTRY(mmdb_entry, IspData, LABEL_ISP_NORGANIZATION, default_val);
-        }
-
-        if (t_isp & T_ISP_CORGANIZATION)
-        {
-            mmdb_entry = new MMDB_entry_data_s;
-            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "autonomous_system_organization",  NULL);
-            SET_MMDB_ENTRY(mmdb_entry, IspData, LABEL_ISP_CORGANIZATION, default_val);
-        }
-
-        IpData->Set(keyA, IspData);
     }
 
     // -- Anonymous IPs Info --------------------------------------------------
@@ -530,7 +529,6 @@ NAN_METHOD(lookupIp)
     valA = lookupOptions->Get(keyA);
     if (mmdbNetspeed.filename != NULL && !valA->IsUndefined())
     {
-        // TODO: Put into macros
         mmdb_result = MMDB_lookup_string(&mmdbNetspeed, *ip, &gai_error, &mmdb_error);
 
         if (gai_error)
@@ -541,21 +539,19 @@ NAN_METHOD(lookupIp)
             MY_THROW_EXCEP((std::string("Error looking up ip: ")
                         + nonNull(MMDB_strerror(mmdb_error))).c_str());
 
-        // TODO: Review this condition
-        if (!mmdb_result.found_entry)
-            NanReturnNull();
+        if (mmdb_result.found_entry) {
+            t_net = valA->Uint32Value();
+            Local<Object> NetData = NanNew<Object>();   // Anonymous Container
 
-        t_net = valA->Uint32Value();
-        Local<Object> NetData = NanNew<Object>();   // Anonymous Container
+            if (t_net & T_NETSPEED_TYPE)
+            {
+                mmdb_entry = new MMDB_entry_data_s;
+                status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "connection_type",  NULL);
+                SET_MMDB_ENTRY(mmdb_entry, NetData, LABEL_NETSPEED_TYPE, default_val);
+            }
 
-        if (t_net & T_NETSPEED_TYPE)
-        {
-            mmdb_entry = new MMDB_entry_data_s;
-            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "connection_type",  NULL);
-            SET_MMDB_ENTRY(mmdb_entry, NetData, LABEL_NETSPEED_TYPE, default_val);
+            IpData->Set(keyA, NetData);
         }
-
-        IpData->Set(keyA, NetData);
     }
 
     // -- Anonymous IPs Info --------------------------------------------------
@@ -572,49 +568,47 @@ NAN_METHOD(lookupIp)
             MY_THROW_EXCEP((std::string("Error looking up ip: ")
                         + nonNull(MMDB_strerror(mmdb_error))).c_str());
 
-        // TODO: Review this condition
-        if (!mmdb_result.found_entry)
-            NanReturnNull();
+        if (mmdb_result.found_entry) {
+            t_anonym = valA->Uint32Value();
+            Local<Object> AnymData = NanNew<Object>();   // Anonymous Container
 
-        t_anonym = valA->Uint32Value();
-        Local<Object> AnymData = NanNew<Object>();   // Anonymous Container
+            if (t_anonym & T_ANYM_IS_ANONYMOUS)
+            {
+                mmdb_entry = new MMDB_entry_data_s;
+                status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_anonymous",  NULL);
+                SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_ANONYMOUS, default_val);
+            }
 
-        if (t_anonym & T_ANYM_IS_ANONYMOUS)
-        {
-            mmdb_entry = new MMDB_entry_data_s;
-            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_anonymous",  NULL);
-            SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_ANONYMOUS, default_val);
+            if (t_anonym & T_ANYM_IS_PUBPROXY)
+            {
+                mmdb_entry = new MMDB_entry_data_s;
+                status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_public_proxy",  NULL);
+                SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_PUBPROXY, default_val);
+            }
+
+            if (t_anonym & T_ANYM_IS_ANONYMOUS_VPN)
+            {
+                mmdb_entry = new MMDB_entry_data_s;
+                status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_anonymous_vpn",  NULL);
+                SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_VPN, default_val);
+            }
+
+            if (t_anonym & T_ANYM_IS_HOSTING_PROVIDER)
+            {
+                mmdb_entry = new MMDB_entry_data_s;
+                status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_hosting_provider",  NULL);
+                SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_HOSTING, default_val);
+            }
+
+            if (t_anonym & T_ANYM_IS_TOR_EXIT_NODE)
+            {
+                mmdb_entry = new MMDB_entry_data_s;
+                status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_tor_exit_node",  NULL);
+                SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_TOR, default_val);
+            }
+
+            IpData->Set(keyA, AnymData);
         }
-
-        if (t_anonym & T_ANYM_IS_PUBPROXY)
-        {
-            mmdb_entry = new MMDB_entry_data_s;
-            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_public_proxy",  NULL);
-            SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_PUBPROXY, default_val);
-        }
-
-        if (t_anonym & T_ANYM_IS_ANONYMOUS_VPN)
-        {
-            mmdb_entry = new MMDB_entry_data_s;
-            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_anonymous_vpn",  NULL);
-            SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_VPN, default_val);
-        }
-
-        if (t_anonym & T_ANYM_IS_HOSTING_PROVIDER)
-        {
-            mmdb_entry = new MMDB_entry_data_s;
-            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_hosting_provider",  NULL);
-            SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_HOSTING, default_val);
-        }
-
-        if (t_anonym & T_ANYM_IS_TOR_EXIT_NODE)
-        {
-            mmdb_entry = new MMDB_entry_data_s;
-            status = MMDB_get_value(&mmdb_result.entry, mmdb_entry, "is_tor_exit_node",  NULL);
-            SET_MMDB_ENTRY_BOOL(mmdb_entry, AnymData, LABEL_ANYM_IS_TOR, default_val);
-        }
-
-        IpData->Set(keyA, AnymData);
     }
 
     NanReturnValue(IpData);
